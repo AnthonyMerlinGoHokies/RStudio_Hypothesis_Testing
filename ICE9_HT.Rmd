@@ -1,0 +1,162 @@
+---
+output: pdf_document
+geometry: margin=1.5cm
+---
+
+# ICE \#9: Confidence Intervals and Hypothesis Testing 
+
+Instructions: Unless otherwise stated, use $\alpha = 0.05$.
+
+Reminder: In-Class Exercises are graded as Complete or Incomplete. To receive a complete grade, you MUST ANSWER EVERY QUESTION to the best of your ability. For instance, if you do not answer ONE QUESTION, you will receive an incomplete on this assignment. The purpose of this grading scale is to ensure you are attempting every problem and working to learn the material.
+
+## Problem 1
+
+A study was made of a sample of 25 records of patients seen at a chronic disease hospital on a outpatient basis where we assume the sample comes from a normal distribution. The mean number of outpatient visits per patient was 4.83, and the sample standard deviation was 1.75.  Can it be concluded from these data that the population mean is greater than four visits per patient?  Test with $\alpha = 0.01$.
+
+a) State the appropriate null and alternative hypothesis.
+
+$$H_{0} : \mu \le 4 $$
+$$H_{A} : \mu > 4 $$
+
+$$ $$
+
+b) What hypothesis test would you conduct? What are the assumptions for this test?
+
+$~$ T-Test; Data is from A normal Distribution
+
+ Sample Standard Deviation 
+
+c) Compute the test statistic. (Write out the formula)
+
+Our test statistics is: 
+$$ \frac{\bar{x} - \mu_{0}}{s/\sqrt{n}}$$
+$$ \frac{4.83-4}{1.75/\sqrt{25}}$$
+$$ =2.37$$
+
+d) Compute the $P$-value. (Show your work)
+
+```{r}
+df_val <- 25 - 1
+test_stat <- (4.83 - 4)/(1.75/sqrt(25))
+print(test_stat)
+
+pt(test_stat, df = df_val, lower.tail = FALSE)
+
+```
+
+e) State the conclusion of the test at the $\alpha = 0.01$ significance level in the context of this setting.
+
+$~$ Fail to Reject the NUll Hypothesis beacuse the p-value (0.013) is greater than alpha (0.01). Therer is insufficenit evidence to conclude that the population mean is greater than four vistis per patient
+
+f) Verify your results with reading in the dataset and using R Function. 
+```{r}
+# Read in .CSV
+prob1 <- read.csv("problem1_data.csv")
+t.test(prob1$x,mu = 4, alternative = 'greater',conf.level = 0.99)
+
+```
+
+$~$ \newpage 
+
+## Problem 2
+
+Good website design can make Web navigation easier. A study was conducted were researchers compared two different designs.Reseachers collected a sample of 10 users using conventional web design averaged 34.04 items identified with a standard deviation with 3.69 AND collected a sample of 10 users using a new structured Web design  averaged 45.38 items identified  with a standard deviation of 9.10. Can we conclude that the mean number of items identified with the new structured design exceeds that of the conventional web design by more than 2. 
+
+a) What hypothesis test would you conduct? What are the assumptions for this test?
+
+$~$ We perform a unpooled t-test beacuse we have twio independet population samples with unknown unequal variance.
+
+b) State the appropriate null and alternative hypothesis.
+
+$$ H_{o} : \mu_{new} \le \mu_{old} + 2;  H_{a}\mu>\mu_{old} + 2 H_{o}: \mu_{new} - \mu_{old} \le 2; H_{a}\mu_{new} - \mu_{old} > 2$$
+
+c) Compute the test statistic. (Write out the formula)
+
+$$ t_{stat} = \frac{\bar{X}_{new} - \bar{X}_{old} - (\mu_{new} - \mu_{old})}{\sqrt{\frac{s^2_{new}}{n_{new}} + \frac{s^2_{old}}{n_{old}}}}$$
+
+
+
+```{r}
+test_stat <- ((45.38 - 34.04) - 2)/ sqrt(9.1^2/10 + 3.69^2/10)
+test_stat
+```
+
+d) Compute the $P$-value. (Show your work)
+
+```{r}
+df_val_num <- (9.1^2/10 + 3.69^2/10)^2
+df_val_dem <- (9.1^2/10)^2/(10 - 1)+(3.69^2/10)^2/(10-1)
+df_val <- df_val_num/df_val_dem
+
+pt(test_stat, df_val, lower.tail = FALSE)
+```
+
+
+e) State the conclusion of the test at the $\alpha = 0.05$ significance level in the context of this setting.
+
+$~$ Reject Jo beacause p-value (0.005) is less than alpha. There is suffiencient eviendece to suggest that the mean number these iteams idenitfied with new structed design exceeds that of conventional web 
+
+f) Verify your results with reading in the dataset and using R Function.
+
+```{r}
+# Read in .CSV
+prob2 <- read.csv("problem2_data.csv")
+t.test(prob1$x,mu = 4, alternative = 'greater',conf.level = 0.99)
+
+
+
+# t.test()
+```
+
+$~$ \newpage 
+
+## Problem 3
+Two methods have been developed to determine the nickel content of steel. In a sample of 5 replications of the first method, the average measurement was $\bar{X} = 3.16$ and the standard deviation was $s_x = 0.031$. The average of seven replications of the second method was $\bar{Y} = 3.28$ and the standard deviation was $s_y = 0.048$. Can we conclude that there is a difference in the mean measurements between the two methods at $\alpha = 0.05$? 
+
+a) What hypothesis test would you conduct? What are the assumptions for this test?
+
+$~$  Pooled t-tests because we have two independet population samples.  
+
+b) State the appropriate null and alternative hypothesis.
+
+$$ H_{o} : \mu_{x} -\mu{y}; H_{a}\mu_{x} \neq \mu_{y}$$
+c) Compute the test statistic. (Write out the formula)
+
+$$ t_{stat} = \frac{\bar{X}_x -\bar{X}_y - (\mu_x - \mu_y)}{sp\sqrt{\frac{1}{n_e} + \frac{1}{n_y}}}$$ 
+
+```{r}
+sp_num <- (5-1)*(0.031)^2 + (7-1)*(0.048)^2
+sp_den <- 5 + 7 -2 
+sp<- sqrt(sp_num/sp_den); sp
+
+test_stat <- ((3.16-3.28)-0)/(sp*sqrt(1/5+1/7))
+test_stat
+```
+
+d) Compute the $P$-value. (Show your work)
+
+```{r}
+df_val <- 5 + 7 - 2
+2*pt(-4.87,df = df_val)
+```
+
+
+
+e) State the conclusion of the test at the $\alpha = 0.05$ significance level in the context of this setting.
+
+Rejected Ho becasue p-value is less than alpha . there is sufficenent evidence to suggest that there is a differencein the mean measurements between the two methods 
+
+
+f) Verify your results with reading in the dataset and using R Function.
+
+```{r}
+# Read in the data
+x <- read.csv("problem3_xdata.csv")
+y <- read.csv("problem3_ydata.csv")
+
+t.test(x,y, mu = 0, alternative = 'two.sided',var.equal = TRUE)
+# t.test()
+```
+
+--- 
+
